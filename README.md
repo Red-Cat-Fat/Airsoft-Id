@@ -312,6 +312,27 @@ ng test
    ```
 6. **Configure firewall** to allow ports 80 and 443
 
+### Automated Deployment Script
+
+For Ubuntu Linux servers, you can use the automated deployment script (`deploy.sh`) which handles the complete deployment process:
+
+1. **Make the script executable**:
+   ```bash
+   chmod +x deploy.sh
+   ```
+
+2. **Install prerequisites**:
+   ```bash
+   ./deploy.sh --install-prerequisites
+   ```
+
+3. **Perform initial deployment**:
+   ```bash
+   ./deploy.sh --initial-deploy
+   ```
+
+See `DEPLOY_SCRIPT_README.md` for detailed usage instructions.
+
 ### Monitoring
 
 Access logs:

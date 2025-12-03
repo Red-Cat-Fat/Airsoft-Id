@@ -1,0 +1,125 @@
+# FINAL DEPLOYMENT INSTRUCTIONS
+
+## Complete Deployment of Strikeball Social Network
+
+The deployment process has been partially completed. The following steps require Docker Desktop to be running to finish the deployment.
+
+## Step 1: Start Docker Desktop
+
+1. Open the Start menu (Windows key)
+2. Search for "Docker Desktop"
+3. Click on the Docker Desktop application to launch it
+4. Wait for the Docker icon to appear in your system tray (bottom right corner)
+5. Wait an additional 1-2 minutes for Docker to fully initialize
+
+## Step 2: Verify Docker is Running
+
+Open a new PowerShell window and run:
+```powershell
+docker --version
+docker compose version
+```
+
+You should see version information for both commands.
+
+## Step 3: Complete the Deployment
+
+### Option A: Use the Automated Script (Recommended)
+
+1. Open PowerShell as Administrator
+2. Navigate to the project directory:
+   ```powershell
+   cd e:\Projects\Web\Airsoft-Id
+   ```
+
+3. Run the deployment script:
+   ```powershell
+   .\deploy.ps1
+   ```
+
+The script will automatically:
+- Wait for Docker to be ready
+- Start all containers (PostgreSQL, Redis, API, Nginx, Backup service)
+- Run database migrations
+- Verify the deployment
+- Display access URLs
+
+### Option B: Manual Deployment
+
+1. Open PowerShell
+2. Navigate to the project directory:
+   ```powershell
+   cd e:\Projects\Web\Airsoft-Id
+   ```
+
+3. Start all services:
+   ```powershell
+   docker compose up -d --build
+   ```
+
+4. Wait 30-60 seconds for services to initialize
+
+5. Check container status:
+   ```powershell
+   docker compose ps
+   ```
+
+6. Run database migrations:
+   ```powershell
+   docker compose exec api dotnet ef database update
+   ```
+
+7. Verify deployment:
+   ```powershell
+   # Test API health
+   curl http://localhost:5000/health
+   
+   # Test frontend access
+   curl http://localhost
+   ```
+
+## Step 4: Access Your Application
+
+Once deployment is complete, you can access:
+
+- **Frontend Application**: http://localhost
+- **Backend API**: http://localhost:5000
+- **Swagger Documentation**: http://localhost:5000/swagger
+- **Health Check**: http://localhost:5000/health
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. **Check Docker Status**:
+   ```powershell
+   docker info
+   ```
+
+2. **View Container Logs**:
+   ```powershell
+   docker compose logs
+   ```
+
+3. **Restart Services**:
+   ```powershell
+   docker compose down
+   docker compose up -d --build
+   ```
+
+4. **Check Port Conflicts**:
+   Make sure ports 80, 443, 5000, 5432, and 6379 are not being used by other applications.
+
+## Deployment Completion
+
+When all steps are completed successfully, you will have:
+
+✅ PostgreSQL database running in Docker container  
+✅ Redis cache running in Docker container  
+✅ ASP.NET Core API running in Docker container  
+✅ Nginx web server serving the Angular frontend  
+✅ Automated backup service running  
+✅ Database initialized with all tables and relationships  
+✅ Fully functional Airsoft social network application  
+
+Enjoy your deployed Strikeball Social Network!
