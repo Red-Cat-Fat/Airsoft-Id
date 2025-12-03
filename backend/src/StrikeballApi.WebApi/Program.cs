@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StrikeballApi.Infrastructure.Data;
 using StrikeballApi.Infrastructure.Identity;
+using StrikeballApi.Infrastructure.Repositories;
 using StrikeballApi.WebApi.Services;
 using System.Text;
 
@@ -16,6 +17,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Register services
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+// Register repositories
+builder.Services.AddScoped<IAirsofterRepository, AirsofterRepository>();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
