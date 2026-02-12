@@ -83,16 +83,14 @@ services:
 
   # Nginx Reverse Proxy
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    image: strikeball-nginx:local
     container_name: strikeball-nginx
     ports:
       - "${HTTP_PORT:-80}:80"
       - "${HTTPS_PORT:-443}:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-      - ./frontend/dist:/usr/share/nginx/html:ro
     depends_on:
       - api
     networks:
@@ -124,15 +122,7 @@ services:
     volumes:
       - backup-data:/backups
       - ./scripts/backup.sh:/backup.sh:ro
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        while true; do
-          TIMESTAMP=$$(date +%Y%m%d_%H%M%S)
-          PGPASSWORD=$$POSTGRES_PASSWORD pg_dump -h postgres -U $$POSTGRES_USER $$POSTGRES_DB | gzip > /backups/backup_$$TIMESTAMP.sql.gz
-          find /backups -name "backup_*.sql.gz" -mtime +$$BACKUP_RETENTION_DAYS -delete
-          sleep 86400
-        done
+    command: ["/backup.sh"]
     depends_on:
       postgres:
         condition: service_healthy
