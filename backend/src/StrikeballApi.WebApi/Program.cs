@@ -7,6 +7,7 @@ using StrikeballApi.Infrastructure.Data;
 using StrikeballApi.Infrastructure.Identity;
 using StrikeballApi.Infrastructure.Repositories;
 using StrikeballApi.WebApi.Services;
+using StackExchange.Redis;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -123,15 +124,12 @@ builder.Services.AddCors(options =>
 var redisConnection = builder.Configuration.GetConnectionString("Redis");
 if (!string.IsNullOrEmpty(redisConnection))
 {
-    builder.Services.AddStackExchangeRedisCache(options =>
-    {
-        options.Configuration = redisConnection;
-    });
+    builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+        ConnectionMultiplexer.Connect(redisConnection));
 }
 
 // Health checks
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<ApplicationDbContext>();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 

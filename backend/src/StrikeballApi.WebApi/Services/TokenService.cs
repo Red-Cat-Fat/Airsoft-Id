@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StrikeballApi.Infrastructure.Identity;
 using StrikeballApi.WebApi.Models.Auth;
@@ -60,8 +59,8 @@ public class TokenService : ITokenService
 
     public async Task<AuthResponse?> RefreshTokenAsync(string refreshToken)
     {
-        var user = await _userManager.Users
-            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        var user = _userManager.Users
+            .FirstOrDefault(u => u.RefreshToken == refreshToken);
 
         if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
