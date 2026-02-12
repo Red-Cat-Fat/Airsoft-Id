@@ -41,6 +41,21 @@ A comprehensive web-based social network platform for airsoft (strikeball) enthu
 - **Reverse Proxy**: Nginx
 - **Version Control**: Git
 
+## ⚡ Быстрый Docker деплой (одной командой)
+
+1. Подготовьте секреты:
+   ```bash
+   cp .env.example .env
+   ```
+   Обновите в `.env` значения `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `JWT_SECRET_KEY`.
+
+2. Запустите всё приложение одной командой:
+   ```bash
+   docker compose up --build -d
+   ```
+
+Подробная инструкция: [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md).
+
 ## 📋 Prerequisites
 
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
