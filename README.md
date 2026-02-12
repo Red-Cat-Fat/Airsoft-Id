@@ -56,6 +56,9 @@
 
 Подробная инструкция: [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md).
 
+> ℹ️ В проекте используется синтаксис Docker Compose V2: `docker compose ...`.
+> Если команда `docker compose` недоступна, см. раздел [Запуск в WSL](#-запуск-в-wsl).
+
 ## 📋 Требования
 
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
@@ -94,7 +97,7 @@ JWT_SECRET_KEY=YourSuperSecretJWTKey
 Самый простой способ старта — Docker Compose, который поднимет все сервисы:
 
 ```bash
-docker-compose up -d
+docker compose up --build -d
 ```
 
 Будут запущены:
@@ -109,7 +112,7 @@ docker-compose up -d
 После запуска контейнеров примените миграции:
 
 ```bash
-docker-compose exec api dotnet ef database update
+docker compose exec api dotnet ef database update
 ```
 
 ### 5. Откройте приложение
@@ -168,6 +171,52 @@ API будет доступно по адресу `https://localhost:5001` ил�
 
 Angular-приложение будет доступно по адресу `http://localhost:4200`.
 
+## 🐧 Запуск в WSL
+
+Если вы запускаете проект в WSL, используйте один из двух поддерживаемых вариантов.
+
+### Вариант A (рекомендуется): Docker Desktop + интеграция с WSL
+
+1. Установите Docker Desktop в Windows.
+2. В Docker Desktop откройте **Settings → Resources → WSL Integration**.
+3. Включите интеграцию для вашего дистрибутива (Ubuntu и т.д.).
+4. Перезапустите WSL:
+   ```bash
+   wsl --shutdown
+   ```
+5. Проверьте доступность Compose V2:
+   ```bash
+   docker compose version
+   ```
+6. Запустите проект:
+   ```bash
+   cp .env.example .env
+   docker compose up --build -d
+   ```
+
+### Вариант B: Docker Engine внутри WSL (без Docker Desktop)
+
+1. Установите Docker Engine из официального Docker-репозитория.
+2. Убедитесь, что установлен плагин `docker-compose-plugin`.
+3. Проверьте команду:
+   ```bash
+   docker compose version
+   ```
+4. Запустите проект:
+   ```bash
+   cp .env.example .env
+   docker compose up --build -d
+   ```
+
+### Проверка и типовые проблемы в WSL
+
+- Проверка запущенных сервисов:
+  ```bash
+  docker compose ps
+  ```
+- Если видите `docker: unknown command: docker compose`, значит Compose V2 не установлен или не подключён к WSL.
+- Если Docker запускается в Windows, а не в WSL, убедитесь, что WSL Integration включена в Docker Desktop.
+
 ## 📁 Структура проекта
 
 ```
@@ -222,38 +271,38 @@ strikeball-social-network/
 
 ### Запуск всех сервисов
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Остановка всех сервисов
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Просмотр логов
 ```bash
-docker-compose logs -f [service-name]
-# Пример: docker-compose logs -f api
+docker compose logs -f [service-name]
+# Пример: docker compose logs -f api
 ```
 
 ### Пересобрать и перезапустить сервис
 ```bash
-docker-compose up -d --build api
+docker compose up -d --build api
 ```
 
 ### Подключиться к контейнеру
 ```bash
-docker-compose exec api bash
+docker compose exec api bash
 ```
 
 ### Резервная копия БД (вручную)
 ```bash
-docker-compose exec postgres pg_dump -U postgres strikeballdb > backup.sql
+docker compose exec postgres pg_dump -U postgres strikeballdb > backup.sql
 ```
 
 ### Восстановление БД
 ```bash
-docker-compose exec -T postgres psql -U postgres strikeballdb < backup.sql
+docker compose exec -T postgres psql -U postgres strikeballdb < backup.sql
 ```
 
 ## 📊 API-эндпоинты
@@ -319,11 +368,11 @@ ng test
 3. Обновите конфигурацию Nginx под ваш домен
 4. Соберите и запустите сервисы:
    ```bash
-   docker-compose -f docker-compose.yml up -d
+   docker compose -f docker-compose.yml up -d
    ```
 5. Выполните миграции БД:
    ```bash
-   docker-compose exec api dotnet ef database update
+   docker compose exec api dotnet ef database update
    ```
 6. Настройте firewall, открыв порты 80 и 443
 
@@ -352,7 +401,7 @@ ng test
 
 Просмотр логов:
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 Проверка здоровья сервисов:
