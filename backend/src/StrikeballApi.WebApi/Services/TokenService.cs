@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StrikeballApi.Infrastructure.Identity;
 using StrikeballApi.WebApi.Models.Auth;
