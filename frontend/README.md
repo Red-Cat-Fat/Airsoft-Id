@@ -1,130 +1,130 @@
 # Strikeball Social Network - Frontend
 
-Angular-based web application for the Strikeball Social Network platform.
+Веб-приложение на Angular для платформы Strikeball Social Network.
 
-## Prerequisites
+## Требования
 
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
+- npm или yarn
 - Angular CLI 17+
 
-## Installation
+## Установка
 
-1. **Install Node.js** (if not already installed)
-   - Download from https://nodejs.org/
-   - Verify: `node --version` and `npm --version`
+1. **Установите Node.js** (если ещё не установлен)
+   - Скачайте с https://nodejs.org/
+   - Проверьте версии: `node --version` и `npm --version`
 
-2. **Install Angular CLI globally**:
+2. **Установите Angular CLI глобально**:
    ```bash
    npm install -g @angular/cli
    ```
 
-3. **Install project dependencies**:
+3. **Установите зависимости проекта**:
    ```bash
    cd frontend
    npm install
    ```
 
-## Development server
+## Сервер разработки
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Запустите `ng serve` для dev-сервера. Откройте `http://localhost:4200/`. Приложение автоматически перезагружается при изменениях в исходных файлах.
 
 ```bash
 npm start
-# or
+# или
 ng serve
 ```
 
-## Build
+## Сборка
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Запустите `ng build`, чтобы собрать проект. Артефакты сборки будут находиться в каталоге `dist/`.
 
 ```bash
 npm run build
-# or
+# или
 ng build --configuration production
 ```
 
-## Project Structure
+## Структура проекта
 
 ```
 frontend/
 ├── src/
 │   ├── app/
-│   │   ├── core/              # Core services, guards, interceptors
-│   │   ├── shared/            # Shared components, pipes, directives
-│   │   ├── features/          # Feature modules
-│   │   │   ├── auth/         # Authentication feature
-│   │   │   ├── games/        # Games management
-│   │   │   ├── teams/        # Teams management
-│   │   │   ├── fields/       # Fields management
-│   │   │   └── profile/      # User profile
-│   │   ├── app.component.*   # Root component
-│   │   ├── app.routes.ts     # Application routes
-│   │   └── app.config.ts     # Application configuration
-│   ├── assets/               # Static assets
-│   ├── environments/         # Environment configurations
-│   └── styles.scss          # Global styles
-├── angular.json             # Angular CLI configuration
-├── package.json             # Dependencies
-└── tsconfig.json           # TypeScript configuration
+│   │   ├── core/              # Базовые сервисы, guard-ы, interceptor-ы
+│   │   ├── shared/            # Общие компоненты, pipe-ы, директивы
+│   │   ├── features/          # Функциональные модули
+│   │   │   ├── auth/          # Аутентификация
+│   │   │   ├── games/         # Управление играми
+│   │   │   ├── teams/         # Управление командами
+│   │   │   ├── fields/        # Управление полигонами
+│   │   │   └── profile/       # Профиль пользователя
+│   │   ├── app.component.*    # Корневой компонент
+│   │   ├── app.routes.ts      # Маршруты приложения
+│   │   └── app.config.ts      # Конфигурация приложения
+│   ├── assets/                # Статические ресурсы
+│   ├── environments/          # Конфигурации окружений
+│   └── styles.scss            # Глобальные стили
+├── angular.json               # Конфигурация Angular CLI
+├── package.json               # Зависимости
+└── tsconfig.json              # Конфигурация TypeScript
 ```
 
-## Features to be Implemented
+## Возможности, которые планируются к реализации
 
-- [ ] Authentication (login, register, logout)
-- [ ] Player profile management
-- [ ] Team management
-- [ ] Game browsing and registration
-- [ ] Field information with maps
-- [ ] Violation tracking
-- [ ] Dashboard with statistics
+- [ ] Аутентификация (вход, регистрация, выход)
+- [ ] Управление профилем игрока
+- [ ] Управление командами
+- [ ] Просмотр игр и регистрация
+- [ ] Информация о полигонах с картами
+- [ ] Учёт нарушений
+- [ ] Дашборд со статистикой
 
-## Tech Stack
+## Технологический стек
 
-- **Framework**: Angular 17 (standalone components)
-- **UI Library**: Angular Material
-- **State Management**: Signals (Angular 17+)
-- **HTTP Client**: Angular HttpClient with interceptors
-- **Routing**: Angular Router with lazy loading
-- **Maps**: Leaflet + OpenStreetMap
-- **Styling**: SCSS
+- **Фреймворк**: Angular 17 (standalone-компоненты)
+- **UI-библиотека**: Angular Material
+- **Управление состоянием**: Signals (Angular 17+)
+- **HTTP-клиент**: Angular HttpClient с interceptor-ами
+- **Маршрутизация**: Angular Router с lazy loading
+- **Карты**: Leaflet + OpenStreetMap
+- **Стилизация**: SCSS
 
-## Available Scripts
+## Доступные скрипты
 
-- `npm start` - Start development server
-- `npm run build` - Build for production
-- `npm test` - Run unit tests
-- `npm run watch` - Build in watch mode
-- `ng generate component [name]` - Generate a new component
-- `ng generate service [name]` - Generate a new service
+- `npm start` — запуск dev-сервера
+- `npm run build` — production-сборка
+- `npm test` — запуск unit-тестов
+- `npm run watch` — сборка в режиме отслеживания изменений
+- `ng generate component [name]` — создать новый компонент
+- `ng generate service [name]` — создать новый сервис
 
-## Environment Configuration
+## Конфигурация окружений
 
-The application uses environment files for configuration:
+Приложение использует файлы окружения:
 
-- `environment.development.ts` - Development environment (http://localhost:5000/api)
-- `environment.ts` - Production environment (/api)
+- `environment.development.ts` — разработка (`http://localhost:5000/api`)
+- `environment.ts` — production (`/api`)
 
-## API Integration
+## Интеграция с API
 
-The frontend connects to the ASP.NET Core backend API at:
-- Development: `http://localhost:5000/api`
-- Production: `/api` (proxied through Nginx)
+Frontend подключается к ASP.NET Core API:
+- Разработка: `http://localhost:5000/api`
+- Production: `/api` (проксируется через Nginx)
 
-## Next Steps
+## Следующие шаги
 
-1. Install dependencies: `npm install`
-2. Implement authentication service and components
-3. Create feature modules (games, teams, fields, profile)
-4. Integrate Angular Material components
-5. Add Leaflet maps for field locations
-6. Implement guards for protected routes
-7. Add form validation and error handling
+1. Установить зависимости: `npm install`
+2. Реализовать сервис аутентификации и компоненты
+3. Создать feature-модули (games, teams, fields, profile)
+4. Интегрировать компоненты Angular Material
+5. Добавить карты Leaflet для локаций полигонов
+6. Реализовать guard-ы для защищённых маршрутов
+7. Добавить валидацию форм и обработку ошибок
 
-## Notes
+## Примечания
 
-- This project uses Angular 17's standalone components (no NgModule)
-- HTTP interceptors handle JWT token authentication
-- Lazy loading is used for feature modules to optimize bundle size
-- All dependencies listed in package.json need to be installed with `npm install`
+- Проект использует standalone-компоненты Angular 17 (без NgModule)
+- HTTP-interceptor-ы обрабатывают JWT-аутентификацию
+- Для feature-модулей используется lazy loading для оптимизации размера бандла
+- Все зависимости из package.json устанавливаются командой `npm install`

@@ -1,47 +1,47 @@
 # Strikeball Social Network
 
-A comprehensive web-based social network platform for airsoft (strikeball) enthusiasts that enables community members to connect, organize games, track their history, and manage team activities.
+Комплексная веб-платформа социальной сети для любителей страйкбола, которая помогает участникам сообщества знакомиться, организовывать игры, отслеживать историю и управлять командной активностью.
 
-## 🎯 Features
+## 🎯 Возможности
 
-- **Player Profiles**: Manage airsofter profiles with callsigns, equipment, and game history
-- **Team Management**: Create and manage teams with members, logos, and statistics
-- **Game Organization**: Schedule and manage airsoft games with registration
-- **Field Management**: Maintain field information with maps, rules, and locations
-- **Organizer System**: Role-based permissions for game and event management
-- **Violation Tracking**: Record and manage rule violations for players and teams
-- **Authentication**: Secure JWT-based authentication with role-based access control
+- **Профили игроков**: управление профилями страйкболистов, позывными, снаряжением и историей игр
+- **Управление командами**: создание и администрирование команд с участниками, логотипами и статистикой
+- **Организация игр**: планирование и проведение страйкбольных игр с регистрацией
+- **Управление полигонами**: хранение информации о полигонах, картах, правилах и локациях
+- **Система организаторов**: ролевая модель прав для управления играми и событиями
+- **Учёт нарушений**: фиксация и управление нарушениями правил для игроков и команд
+- **Аутентификация**: безопасная JWT-аутентификация с ролевым контролем доступа
 
-## 🛠 Technology Stack
+## 🛠 Технологический стек
 
 ### Backend
-- **Framework**: ASP.NET Core 8.0 Web API
-- **Language**: C#
-- **Architecture**: Clean Architecture with CQRS pattern
+- **Фреймворк**: ASP.NET Core 8.0 Web API
+- **Язык**: C#
+- **Архитектура**: Clean Architecture с паттерном CQRS
 - **ORM**: Entity Framework Core
-- **Database**: PostgreSQL 15
-- **Caching**: Redis
-- **Authentication**: ASP.NET Core Identity with JWT
-- **API Documentation**: Swagger/OpenAPI
+- **База данных**: PostgreSQL 15
+- **Кеширование**: Redis
+- **Аутентификация**: ASP.NET Core Identity + JWT
+- **Документация API**: Swagger/OpenAPI
 
 ### Frontend
-- **Framework**: Angular (Latest LTS)
-- **Language**: TypeScript
-- **UI Library**: Angular Material / PrimeNG
-- **State Management**: NgRx / Akita
-- **Maps**: Leaflet with OpenStreetMap
+- **Фреймворк**: Angular (актуальная LTS-версия)
+- **Язык**: TypeScript
+- **UI-библиотека**: Angular Material / PrimeNG
+- **Управление состоянием**: NgRx / Akita
+- **Карты**: Leaflet с OpenStreetMap
 
 ### Mobile
-- **Framework**: Ionic Framework with Angular
-- **Platforms**: iOS and Android
-- **Code Sharing**: Shared components and services with web app
+- **Фреймворк**: Ionic Framework + Angular
+- **Платформы**: iOS и Android
+- **Переиспользование кода**: общие компоненты и сервисы с веб-приложением
 
 ### Infrastructure
-- **Containerization**: Docker & Docker Compose
-- **Reverse Proxy**: Nginx
-- **Version Control**: Git
+- **Контейнеризация**: Docker и Docker Compose
+- **Обратный прокси**: Nginx
+- **Контроль версий**: Git
 
-## ⚡ Быстрый Docker деплой (одной командой)
+## ⚡ Быстрый Docker-деплой (одной командой)
 
 1. Подготовьте секреты:
    ```bash
@@ -56,32 +56,32 @@ A comprehensive web-based social network platform for airsoft (strikeball) enthu
 
 Подробная инструкция: [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md).
 
-## 📋 Prerequisites
+## 📋 Требования
 
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 18+](https://nodejs.org/)
 - [Angular CLI](https://angular.io/cli)
-- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/)
-- [PostgreSQL 15](https://www.postgresql.org/download/) (for local development without Docker)
+- [Docker](https://www.docker.com/get-started) и [Docker Compose](https://docs.docker.com/compose/install/)
+- [PostgreSQL 15](https://www.postgresql.org/download/) (для локальной разработки без Docker)
 
-## 🚀 Quick Start
+## 🚀 Быстрый старт
 
-### 1. Clone the Repository
+### 1. Клонируйте репозиторий
 
 ```bash
 git clone https://github.com/yourusername/strikeball-social-network.git
 cd strikeball-social-network
 ```
 
-### 2. Configure Environment Variables
+### 2. Настройте переменные окружения
 
-Copy the example environment file and update with your values:
+Скопируйте пример файла окружения и обновите значения:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and set secure passwords and secrets:
+Отредактируйте `.env` и задайте безопасные пароли/секреты:
 
 ```env
 POSTGRES_PASSWORD=YourSecurePassword
@@ -89,307 +89,307 @@ REDIS_PASSWORD=YourSecureRedisPassword
 JWT_SECRET_KEY=YourSuperSecretJWTKey
 ```
 
-### 3. Run with Docker Compose
+### 3. Запуск через Docker Compose
 
-The easiest way to get started is using Docker Compose, which will start all services:
+Самый простой способ старта — Docker Compose, который поднимет все сервисы:
 
 ```bash
 docker-compose up -d
 ```
 
-This will start:
-- PostgreSQL database (port 5432)
-- Redis cache (port 6379)
-- ASP.NET Core API (port 5000)
-- Nginx reverse proxy (ports 80, 443)
-- Automated backup service
+Будут запущены:
+- PostgreSQL (порт 5432)
+- Redis (порт 6379)
+- ASP.NET Core API (порт 5000)
+- Nginx reverse proxy (порты 80, 443)
+- сервис автоматических бэкапов
 
-### 4. Run Database Migrations
+### 4. Примените миграции базы данных
 
-After the containers are running, apply database migrations:
+После запуска контейнеров примените миграции:
 
 ```bash
 docker-compose exec api dotnet ef database update
 ```
 
-### 5. Access the Application
+### 5. Откройте приложение
 
 - **API**: http://localhost:5000
-- **Swagger Documentation**: http://localhost:5000/swagger
-- **Frontend** (when built): http://localhost:80
+- **Swagger-документация**: http://localhost:5000/swagger
+- **Frontend** (после сборки): http://localhost:80
 
-## 🔧 Development Setup
+## 🔧 Настройка среды разработки
 
-### Backend Development (Without Docker)
+### Разработка Backend (без Docker)
 
-1. **Install .NET 8.0 SDK**
+1. **Установите .NET 8.0 SDK**
 
-2. **Set up PostgreSQL** and create a database:
+2. **Поднимите PostgreSQL** и создайте БД:
    ```sql
    CREATE DATABASE strikeballdb;
    ```
 
-3. **Update connection string** in `backend/src/StrikeballApi.WebApi/appsettings.Development.json`
+3. **Обновите строку подключения** в `backend/src/StrikeballApi.WebApi/appsettings.Development.json`
 
-4. **Run migrations**:
+4. **Выполните миграции**:
    ```bash
    cd backend/src/StrikeballApi.WebApi
    dotnet ef database update
    ```
 
-5. **Run the API**:
+5. **Запустите API**:
    ```bash
    dotnet run
    ```
 
-The API will be available at `https://localhost:5001` or `http://localhost:5000`
+API будет доступно по адресу `https://localhost:5001` или `http://localhost:5000`.
 
-### Frontend Development
+### Разработка Frontend
 
-1. **Install Node.js and Angular CLI**:
+1. **Установите Node.js и Angular CLI**:
    ```bash
    npm install -g @angular/cli
    ```
 
-2. **Navigate to frontend directory** (to be created):
+2. **Перейдите в директорию frontend**:
    ```bash
    cd frontend
    ```
 
-3. **Install dependencies**:
+3. **Установите зависимости**:
    ```bash
    npm install
    ```
 
-4. **Run the development server**:
+4. **Запустите dev-сервер**:
    ```bash
    ng serve
    ```
 
-The Angular app will be available at `http://localhost:4200`
+Angular-приложение будет доступно по адресу `http://localhost:4200`.
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```
 strikeball-social-network/
 ├── backend/
 │   ├── src/
-│   │   ├── StrikeballApi.Domain/         # Domain entities and enums
-│   │   ├── StrikeballApi.Application/    # Business logic (to be added)
-│   │   ├── StrikeballApi.Infrastructure/ # Data access and external services
-│   │   └── StrikeballApi.WebApi/         # API controllers and configuration
-│   ├── tests/                            # Unit and integration tests
-│   └── Dockerfile                        # Docker configuration for API
-├── frontend/                             # Angular web application (to be added)
-├── mobile/                               # Ionic mobile app (to be added)
-├── nginx/                                # Nginx configuration
+│   │   ├── StrikeballApi.Domain/         # Сущности домена и enum-ы
+│   │   ├── StrikeballApi.Application/    # Бизнес-логика (будет добавлено)
+│   │   ├── StrikeballApi.Infrastructure/ # Доступ к данным и внешние сервисы
+│   │   └── StrikeballApi.WebApi/         # API-контроллеры и конфигурация
+│   ├── tests/                            # Unit и интеграционные тесты
+│   └── Dockerfile                        # Docker-конфигурация API
+├── frontend/                             # Angular веб-приложение
+├── mobile/                               # Ionic мобильное приложение (будет добавлено)
+├── nginx/                                # Конфигурация Nginx
 │   ├── conf.d/
-│   │   └── default.conf                  # Server configuration
-│   └── certs/                            # SSL certificates
-├── scripts/                              # Utility scripts
-├── docker-compose.yml                    # Docker Compose configuration
-├── .env.example                          # Environment variables template
-├── .gitignore                            # Git ignore rules
-└── README.md                             # This file
+│   │   └── default.conf                  # Конфигурация сервера
+│   └── certs/                            # SSL-сертификаты
+├── scripts/                              # Служебные скрипты
+├── docker-compose.yml                    # Конфигурация Docker Compose
+├── .env.example                          # Шаблон переменных окружения
+├── .gitignore                            # Правила игнорирования Git
+└── README.md                             # Этот файл
 ```
 
-## 🗄 Database Schema
+## 🗄 Схема базы данных
 
-The application uses the following main entities:
+Приложение использует следующие основные сущности:
 
-- **Airsofters**: Player profiles with personal information and equipment
-- **Teams**: Team information with members and statistics
-- **Fields**: Game field locations with maps and rules
-- **Games**: Scheduled and completed games
-- **Organizers**: Users with elevated permissions
-- **Violations**: Rule violation records
-- **GameParticipants**: Many-to-many relationship between games and players
-- **OrganizerFieldAuthorizations**: Organizer permissions for specific fields
-- **FieldBannedTeams**: Teams banned from specific fields
+- **Airsofters**: профили игроков с личной информацией и снаряжением
+- **Teams**: данные команд, участники и статистика
+- **Fields**: полигоны с картами и правилами
+- **Games**: запланированные и завершённые игры
+- **Organizers**: пользователи с расширенными правами
+- **Violations**: записи о нарушениях
+- **GameParticipants**: связь многие-ко-многим между играми и игроками
+- **OrganizerFieldAuthorizations**: права организаторов на конкретные полигоны
+- **FieldBannedTeams**: команды, заблокированные на конкретных полигонах
 
-## 🔐 Authentication & Authorization
+## 🔐 Аутентификация и авторизация
 
-The application uses JWT-based authentication with the following roles:
+Приложение использует JWT-аутентификацию и следующие роли:
 
-- **Guest**: Unauthenticated users (view public content)
-- **Airsofter**: Registered players
-- **Team Leader**: Team administrators
-- **Organizer**: Event managers
-- **Field Owner**: Field administrators
-- **Administrator**: Platform administrators
+- **Guest**: неавторизованные пользователи (просмотр публичного контента)
+- **Airsofter**: зарегистрированные игроки
+- **Team Leader**: администраторы команд
+- **Organizer**: менеджеры событий
+- **Field Owner**: администраторы полигонов
+- **Administrator**: администраторы платформы
 
-## 🐳 Docker Commands
+## 🐳 Docker-команды
 
-### Start all services
+### Запуск всех сервисов
 ```bash
 docker-compose up -d
 ```
 
-### Stop all services
+### Остановка всех сервисов
 ```bash
 docker-compose down
 ```
 
-### View logs
+### Просмотр логов
 ```bash
 docker-compose logs -f [service-name]
-# Example: docker-compose logs -f api
+# Пример: docker-compose logs -f api
 ```
 
-### Rebuild and restart a service
+### Пересобрать и перезапустить сервис
 ```bash
 docker-compose up -d --build api
 ```
 
-### Access a running container
+### Подключиться к контейнеру
 ```bash
 docker-compose exec api bash
 ```
 
-### Database backup (manual)
+### Резервная копия БД (вручную)
 ```bash
 docker-compose exec postgres pg_dump -U postgres strikeballdb > backup.sql
 ```
 
-### Restore database
+### Восстановление БД
 ```bash
 docker-compose exec -T postgres psql -U postgres strikeballdb < backup.sql
 ```
 
-## 📊 API Endpoints
+## 📊 API-эндпоинты
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/refresh-token` - Refresh access token
-- `POST /api/auth/logout` - User logout
+### Аутентификация
+- `POST /api/auth/register` — регистрация нового пользователя
+- `POST /api/auth/login` — вход пользователя
+- `POST /api/auth/refresh-token` — обновление access-токена
+- `POST /api/auth/logout` — выход пользователя
 
 ### Airsofters
-- `GET /api/airsofters` - Get all airsofters
-- `GET /api/airsofters/{id}` - Get airsofter by ID
-- `POST /api/airsofters` - Create new airsofter
-- `PUT /api/airsofters/{id}` - Update airsofter
-- `DELETE /api/airsofters/{id}` - Delete airsofter
+- `GET /api/airsofters` — получить список игроков
+- `GET /api/airsofters/{id}` — получить игрока по ID
+- `POST /api/airsofters` — создать игрока
+- `PUT /api/airsofters/{id}` — обновить игрока
+- `DELETE /api/airsofters/{id}` — удалить игрока
 
 ### Teams
-- `GET /api/teams` - Get all teams
-- `GET /api/teams/{id}` - Get team by ID
-- `POST /api/teams` - Create new team
-- `PUT /api/teams/{id}` - Update team
-- `DELETE /api/teams/{id}` - Delete team
+- `GET /api/teams` — получить список команд
+- `GET /api/teams/{id}` — получить команду по ID
+- `POST /api/teams` — создать команду
+- `PUT /api/teams/{id}` — обновить команду
+- `DELETE /api/teams/{id}` — удалить команду
 
 ### Games
-- `GET /api/games` - Get all games
-- `GET /api/games/{id}` - Get game by ID
-- `POST /api/games` - Create new game
-- `PUT /api/games/{id}` - Update game
-- `DELETE /api/games/{id}` - Delete game
-- `POST /api/games/{id}/register` - Register for game
-- `DELETE /api/games/{id}/unregister` - Unregister from game
+- `GET /api/games` — получить список игр
+- `GET /api/games/{id}` — получить игру по ID
+- `POST /api/games` — создать игру
+- `PUT /api/games/{id}` — обновить игру
+- `DELETE /api/games/{id}` — удалить игру
+- `POST /api/games/{id}/register` — зарегистрироваться на игру
+- `DELETE /api/games/{id}/unregister` — отменить регистрацию на игру
 
 ### Fields
-- `GET /api/fields` - Get all fields
-- `GET /api/fields/{id}` - Get field by ID
-- `POST /api/fields` - Create new field
-- `PUT /api/fields/{id}` - Update field
-- `DELETE /api/fields/{id}` - Delete field
+- `GET /api/fields` — получить список полигонов
+- `GET /api/fields/{id}` — получить полигон по ID
+- `POST /api/fields` — создать полигон
+- `PUT /api/fields/{id}` — обновить полигон
+- `DELETE /api/fields/{id}` — удалить полигон
 
-For complete API documentation, visit `/swagger` when the API is running.
+Полная документация API доступна по адресу `/swagger` при запущенном API.
 
-## 🧪 Testing
+## 🧪 Тестирование
 
-### Run Backend Tests
+### Backend
 ```bash
 cd backend
 dotnet test
 ```
 
-### Run Frontend Tests
+### Frontend
 ```bash
 cd frontend
 ng test
 ```
 
-## 🚢 Deployment
+## 🚢 Развёртывание
 
-### Production Deployment Steps
+### Продакшен-деплой
 
-1. **Update environment variables** in `.env` with production values
-2. **Configure SSL certificates** in `nginx/certs/`
-3. **Update Nginx configuration** for your domain
-4. **Build and start services**:
+1. Обновите переменные окружения в `.env` значениями для production
+2. Настройте SSL-сертификаты в `nginx/certs/`
+3. Обновите конфигурацию Nginx под ваш домен
+4. Соберите и запустите сервисы:
    ```bash
    docker-compose -f docker-compose.yml up -d
    ```
-5. **Run database migrations**:
+5. Выполните миграции БД:
    ```bash
    docker-compose exec api dotnet ef database update
    ```
-6. **Configure firewall** to allow ports 80 and 443
+6. Настройте firewall, открыв порты 80 и 443
 
-### Automated Deployment Script
+### Автоматический скрипт деплоя
 
-For Ubuntu Linux servers, you can use the automated deployment script (`deploy.sh`) which handles the complete deployment process:
+Для Ubuntu-серверов можно использовать скрипт `deploy.sh`, который автоматизирует полный процесс деплоя:
 
-1. **Make the script executable**:
+1. Сделайте скрипт исполняемым:
    ```bash
    chmod +x deploy.sh
    ```
 
-2. **Install prerequisites**:
+2. Установите зависимости:
    ```bash
    ./deploy.sh --install-prerequisites
    ```
 
-3. **Perform initial deployment**:
+3. Выполните первичный деплой:
    ```bash
    ./deploy.sh --initial-deploy
    ```
 
-See `DEPLOY_SCRIPT_README.md` for detailed usage instructions.
+Подробности: `DEPLOY_SCRIPT_README.md`.
 
-### Monitoring
+### Мониторинг
 
-Access logs:
+Просмотр логов:
 ```bash
 docker-compose logs -f
 ```
 
-Check service health:
+Проверка здоровья сервисов:
 ```bash
 curl http://localhost/health
 ```
 
-## 📝 License
+## 📝 Лицензия
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Проект распространяется по лицензии MIT. Подробности — в файле LICENSE.
 
-## 👥 Contributing
+## 👥 Вклад в проект
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Мы рады pull request-ам и предложениям по улучшению проекта.
 
-## 📧 Support
+## 📧 Поддержка
 
-For support and questions, please open an issue in the GitHub repository.
+Для вопросов и поддержки создайте issue в репозитории GitHub.
 
-## 🗺 Roadmap
+## 🗺 Дорожная карта
 
-- [x] Project structure and architecture
-- [x] Domain entities and database schema
-- [x] Docker Compose configuration
-- [ ] Authentication API endpoints
-- [ ] CRUD operations for all entities
-- [ ] Angular frontend application
-- [ ] Ionic mobile application
-- [ ] Map integration with Leaflet
-- [ ] Real-time notifications
-- [ ] Payment integration
-- [ ] Advanced analytics and statistics
+- [x] Структура проекта и архитектура
+- [x] Доменные сущности и схема БД
+- [x] Конфигурация Docker Compose
+- [ ] API-эндпоинты аутентификации
+- [ ] CRUD-операции для всех сущностей
+- [ ] Angular frontend
+- [ ] Ionic мобильное приложение
+- [ ] Интеграция карт на Leaflet
+- [ ] Уведомления в реальном времени
+- [ ] Интеграция платежей
+- [ ] Расширенная аналитика и статистика
 
-## 🙏 Acknowledgments
+## 🙏 Благодарности
 
-- Built with ASP.NET Core and Angular
-- PostgreSQL for robust data storage
-- Redis for high-performance caching
-- Docker for containerization
-- Nginx for reverse proxy and load balancing
+- Создано с использованием ASP.NET Core и Angular
+- PostgreSQL для надёжного хранения данных
+- Redis для высокопроизводительного кеширования
+- Docker для контейнеризации
+- Nginx для reverse proxy и балансировки нагрузки
