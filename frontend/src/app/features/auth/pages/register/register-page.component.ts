@@ -95,7 +95,11 @@ export class RegisterPageComponent {
 
   private getApiErrorMessage(error: HttpErrorResponse): string {
     if (error.status === 409) {
-      return 'Пользователь с таким callsign или email уже существует.';
+      const serverMessage = typeof error.error === 'string'
+        ? error.error
+        : error.error?.message || error.error?.title;
+
+      return serverMessage || 'Пользователь с таким email уже существует.';
     }
 
     if (error.status === 400) {
