@@ -1,0 +1,70 @@
+<main class="airsofter-details-page">
+  <a routerLink="/airsofters" class="back-link">← К списку страйкболистов</a>
+
+  <section *ngIf="isLoading" class="state state--loading">Загрузка профиля...</section>
+
+  <section *ngIf="!isLoading && notFound" class="state state--empty">
+    <h1>Игрок не найден</h1>
+    <p>Страйкболист с указанным идентификатором не существует или был удалён.</p>
+  </section>
+
+  <section *ngIf="!isLoading && !notFound && errorMessage" class="state state--error">
+    {{ errorMessage }}
+  </section>
+
+  <section *ngIf="!isLoading && !notFound && !errorMessage && airsofter" class="details-card">
+    <header class="details-card__header">
+      <h1>{{ airsofter.callsign }}</h1>
+      <p>
+        {{ airsofter.lastName }} {{ airsofter.firstName }}
+        <span *ngIf="airsofter.middleName">{{ airsofter.middleName }}</span>
+      </p>
+    </header>
+
+    <nav class="tabs" aria-label="Разделы профиля">
+      <button
+        *ngFor="let tab of tabs"
+        type="button"
+        class="tabs__button"
+        [class.tabs__button--active]="activeTab === tab.key"
+        (click)="setActiveTab(tab.key)"
+      >
+        {{ tab.label }}
+      </button>
+    </nav>
+
+    <section *ngIf="activeTab === 'profile'" class="tab-content">
+      <p><strong>Команда:</strong> {{ airsofter.teamName || 'Не указана' }}</p>
+      <p><strong>Сыграно игр:</strong> {{ airsofter.gamesPlayed }}</p>
+      <p><strong>Нарушений:</strong> {{ airsofter.violationsCount }}</p>
+      <p><strong>Снаряжение:</strong> {{ airsofter.kitDescription || 'Не указано' }}</p>
+      <p><strong>Приводы:</strong> {{ airsofter.airsoftGunsList || 'Не указаны' }}</p>
+    </section>
+
+    <section *ngIf="activeTab === 'history'" class="tab-content">
+      <p *ngIf="gameHistory.length === 0" class="state state--empty">История игр пуста.</p>
+
+      <ul *ngIf="gameHistory.length > 0" class="details-list">
+        <li *ngFor="let game of gameHistory">
+          <strong>{{ game.name }}</strong>
+          <span>{{ game.date | date: 'dd.MM.yyyy' }}</span>
+          <span>Статус: {{ game.status }}</span>
+          <span>Регистрация: {{ game.registeredAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section *ngIf="activeTab === 'violations'" class="tab-content">
+      <p *ngIf="violations.length === 0" class="state state--empty">Нарушений не найдено.</p>
+
+      <ul *ngIf="violations.length > 0" class="details-list">
+        <li *ngFor="let violation of violations">
+          <strong>{{ violation.description }}</strong>
+          <span>Полигон: {{ violation.fieldName }}</span>
+          <span>Серьёзность: {{ violation.severity }}</span>
+          <span>{{ violation.date | date: 'dd.MM.yyyy' }}</span>
+        </li>
+      </ul>
+    </section>
+  </section>
+</main>
