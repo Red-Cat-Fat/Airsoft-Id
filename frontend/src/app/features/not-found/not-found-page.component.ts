@@ -6,15 +6,18 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <main class="not-found">
+    <main class="error-page">
       <h1>404</h1>
       <p>Страница не найдена.</p>
-      <a routerLink="/">Вернуться на главную</a>
+      <nav class="actions">
+        <a routerLink="/" class="action-link">Вернуться на главную</a>
+        <a routerLink="/login" class="action-link action-link--primary">Войти</a>
+      </nav>
     </main>
   `,
   styles: [
     `
-      .not-found {
+      .error-page {
         display: grid;
         gap: 1rem;
         justify-items: center;
@@ -27,8 +30,17 @@ import { RouterLink } from '@angular/router';
         font-size: 4rem;
       }
 
-      a {
+      .actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .action-link {
         color: #1d4ed8;
+      }
+
+      .action-link--primary {
+        font-weight: 600;
       }
     `
   ]
