@@ -11,6 +11,7 @@ import { AuthResponse, LoginRequest, RegisterRequest, UserInfo } from '../models
 export class AuthService {
   private readonly AUTH_TOKEN_KEY = 'auth_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly EXPIRES_AT_KEY = 'expires_at';
   private readonly USER_KEY = 'user_info';
 
   private currentUserSubject = new BehaviorSubject<UserInfo | null>(this.getUserFromStorage());
@@ -84,8 +85,9 @@ export class AuthService {
   private handleAuthResponse(response: AuthResponse): void {
     localStorage.setItem(this.AUTH_TOKEN_KEY, response.accessToken);
     localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+    localStorage.setItem(this.EXPIRES_AT_KEY, new Date(response.expiresAt).toISOString());
     localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
-    
+
     this.currentUserSubject.next(response.user);
     this.isAuthenticated.set(true);
   }
@@ -93,23 +95,27 @@ export class AuthService {
   private clearAuthData(): void {
     localStorage.removeItem(this.AUTH_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.EXPIRES_AT_KEY);
     localStorage.removeItem(this.USER_KEY);
-    
+
     this.currentUserSubject.next(null);
     this.isAuthenticated.set(false);
   }
 
   private hasValidToken(): boolean {
     const token = this.getToken();
-    if (!token) return false;
+    const expiresAtRaw = localStorage.getItem(this.EXPIRES_AT_KEY);
 
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const expirationDate = new Date(payload.exp * 1000);
-      return expirationDate > new Date();
-    } catch {
+    if (!token || !expiresAtRaw) {
       return false;
     }
+
+    const expiresAt = new Date(expiresAtRaw);
+    if (Number.isNaN(expiresAt.getTime())) {
+      return false;
+    }
+
+    return expiresAt > new Date();
   }
 
   private getUserFromStorage(): UserInfo | null {
