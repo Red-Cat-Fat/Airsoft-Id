@@ -1,0 +1,56 @@
+<main class="register-page" [class.theme-light]="theme() === 'light'" [class.theme-dark]="theme() === 'dark'">
+  <header class="register-page__header">
+    <a routerLink="/" class="brand">Airsoft ID</a>
+    <button type="button" class="theme-toggle" (click)="toggleTheme()">
+      {{ theme() === 'light' ? 'Тёмная тема' : 'Светлая тема' }}
+    </button>
+  </header>
+
+  <section class="register-card">
+    <h1>Регистрация в Airsoft ID</h1>
+    <p class="subtitle">Создайте аккаунт для доступа к профилю.</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
+      <p class="field-error" *ngIf="emailControl.touched && emailControl.hasError('required')">Email обязателен.</p>
+      <p class="field-error" *ngIf="emailControl.touched && emailControl.hasError('email')">Укажите корректный email.</p>
+
+      <label for="password">Пароль</label>
+      <input id="password" type="password" formControlName="password" placeholder="••••••••" autocomplete="new-password" />
+      <p class="field-error" *ngIf="passwordControl.touched && passwordControl.hasError('required')">Пароль обязателен.</p>
+      <p class="field-error" *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">Пароль должен содержать минимум 6 символов.</p>
+
+      <label for="confirmPassword">Подтвердите пароль</label>
+      <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="••••••••" autocomplete="new-password" />
+      <p class="field-error" *ngIf="confirmPasswordControl.touched && confirmPasswordControl.hasError('required')">Подтверждение пароля обязательно.</p>
+      <p class="field-error" *ngIf="registerForm.touched && registerForm.hasError('passwordMismatch')">Пароли должны совпадать.</p>
+
+      <label for="firstName">Имя</label>
+      <input id="firstName" type="text" formControlName="firstName" autocomplete="given-name" />
+      <p class="field-error" *ngIf="firstNameControl.touched && firstNameControl.hasError('required')">Имя обязательно.</p>
+
+      <label for="lastName">Фамилия</label>
+      <input id="lastName" type="text" formControlName="lastName" autocomplete="family-name" />
+      <p class="field-error" *ngIf="lastNameControl.touched && lastNameControl.hasError('required')">Фамилия обязательна.</p>
+
+      <label for="middleName">Отчество</label>
+      <input id="middleName" type="text" formControlName="middleName" autocomplete="additional-name" />
+
+      <label for="callsign">Позывной</label>
+      <input id="callsign" type="text" formControlName="callsign" autocomplete="nickname" />
+      <p class="field-error" *ngIf="callsignControl.touched && callsignControl.hasError('required')">Позывной обязателен.</p>
+
+      <p class="api-error" *ngIf="apiError()">{{ apiError() }}</p>
+
+      <button type="submit" [disabled]="isFormInvalid()">
+        {{ isSubmitting() ? 'Регистрация...' : 'Зарегистрироваться' }}
+      </button>
+    </form>
+
+    <p class="hint">
+      Уже есть аккаунт?
+      <a routerLink="/auth/login">Перейти ко входу</a>
+    </p>
+  </section>
+</main>
