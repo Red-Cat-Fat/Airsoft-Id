@@ -2,8 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-type ThemeMode = 'light' | 'dark';
-
 @Component({
   selector: 'app-home-page',
   standalone: true,
@@ -12,8 +10,6 @@ type ThemeMode = 'light' | 'dark';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent {
-  theme: ThemeMode = 'light';
-
   readonly advantages = [
     {
       title: 'Комьюнити страйкболистов',
@@ -34,8 +30,4 @@ export class HomePageComponent {
     'Подпишитесь на интересные команды и организаторов.',
     'Выбирайте игры и присоединяйтесь к ближайшим событиям.'
   ];
-
-  toggleTheme(): void {
-    this.theme = this.theme === 'light' ? 'dark' : 'light';
-  }
 }

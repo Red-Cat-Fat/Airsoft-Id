@@ -1,11 +1,4 @@
-<main class="home-page" [class.theme-light]="theme === 'light'" [class.theme-dark]="theme === 'dark'">
-  <header class="top-bar">
-    <span class="top-bar__brand">Airsoft ID</span>
-    <button type="button" class="theme-toggle" (click)="toggleTheme()">
-      {{ theme === 'light' ? 'Тёмная тема' : 'Светлая тема' }}
-    </button>
-  </header>
-
+<main class="home-page">
   <section class="hero">
     <div class="hero__content">
       <p class="hero__eyebrow">Сообщество • Игры • Команды</p>
@@ -16,7 +9,7 @@
       </p>
       <div class="hero__actions">
         <a routerLink="/auth/login" class="btn btn--primary">Войти</a>
-        <a routerLink="/register" class="btn btn--secondary">Регистрация</a>
+        <a routerLink="/auth/register" class="btn btn--secondary">Регистрация</a>
         <a routerLink="/players" class="btn btn--ghost">Смотреть игроков</a>
       </div>
     </div>

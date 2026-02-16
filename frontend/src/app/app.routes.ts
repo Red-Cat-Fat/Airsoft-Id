@@ -5,6 +5,8 @@ import { LoginPageComponent } from './features/auth/pages/login/login-page.compo
 import { RegisterPageComponent } from './features/auth/pages/register/register-page.component';
 import { DashboardPageComponent } from './features/dashboard/dashboard-page.component';
 import { ProfileMePageComponent } from './features/profile/pages/me/profile-me-page.component';
+import { PlayersPageComponent } from './features/players/players-page.component';
+import { NotFoundPageComponent } from './features/not-found/not-found-page.component';
 
 export const routes: Routes = [
   {
@@ -32,7 +34,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'players',
+    component: PlayersPageComponent
+  },
+  {
     path: '**',
-    redirectTo: ''
+    component: NotFoundPageComponent
   }
 ];
