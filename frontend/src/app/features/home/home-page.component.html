@@ -1,0 +1,41 @@
+<main class="home-page" [class.theme-light]="theme === 'light'" [class.theme-dark]="theme === 'dark'">
+  <header class="top-bar">
+    <span class="top-bar__brand">Airsoft ID</span>
+    <button type="button" class="theme-toggle" (click)="toggleTheme()">
+      {{ theme === 'light' ? 'Тёмная тема' : 'Светлая тема' }}
+    </button>
+  </header>
+
+  <section class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Сообщество • Игры • Команды</p>
+      <h1>Социальный сервис для страйкбол-сообщества</h1>
+      <p class="hero__description">
+        Airsoft ID помогает игрокам, командам и организаторам находить друг друга,
+        планировать участие в играх и развивать комьюнити.
+      </p>
+      <div class="hero__actions">
+        <a routerLink="/login" class="btn btn--primary">Войти</a>
+        <a routerLink="/register" class="btn btn--secondary">Регистрация</a>
+        <a routerLink="/players" class="btn btn--ghost">Смотреть игроков</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="advantages">
+    <h2>Почему это удобно</h2>
+    <div class="advantages__grid">
+      <article class="advantages__item" *ngFor="let advantage of advantages">
+        <h3>{{ advantage.title }}</h3>
+        <p>{{ advantage.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="how-to-start">
+    <h2>Как начать</h2>
+    <ol>
+      <li *ngFor="let step of onboardingSteps">{{ step }}</li>
+    </ol>
+  </section>
+</main>
