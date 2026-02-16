@@ -1,0 +1,54 @@
+<main class="my-profile-page">
+  <h1>Мой профиль</h1>
+
+  <section *ngIf="isLoading" class="state state--loading">
+    Загрузка профиля...
+  </section>
+
+  <section *ngIf="!isLoading && errorMessage" class="state state--error">
+    {{ errorMessage }}
+  </section>
+
+  <form
+    *ngIf="!isLoading && !errorMessage && airsofter"
+    [formGroup]="profileForm"
+    class="profile-form"
+    (ngSubmit)="saveProfile()"
+  >
+    <p class="profile-form__meta">
+      <strong>Позывной:</strong> {{ airsofter.callsign }}<br />
+      <strong>Email:</strong> {{ currentUser?.email }}
+    </p>
+
+    <label class="field">
+      <span>Имя</span>
+      <input type="text" formControlName="firstName" />
+    </label>
+
+    <label class="field">
+      <span>Фамилия</span>
+      <input type="text" formControlName="lastName" />
+    </label>
+
+    <label class="field">
+      <span>Отчество</span>
+      <input type="text" formControlName="middleName" />
+    </label>
+
+    <label class="field">
+      <span>Снаряжение</span>
+      <textarea rows="4" formControlName="kitDescription"></textarea>
+    </label>
+
+    <label class="field">
+      <span>Приводы</span>
+      <textarea rows="4" formControlName="airsoftGunsList"></textarea>
+    </label>
+
+    <p *ngIf="successMessage" class="state state--success">{{ successMessage }}</p>
+
+    <button type="submit" [disabled]="profileForm.invalid || isSaving">
+      {{ isSaving ? 'Сохранение...' : 'Сохранить изменения' }}
+    </button>
+  </form>
+</main>

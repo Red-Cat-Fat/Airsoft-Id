@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Airsofter, AirsofterGameHistoryItem, AirsofterViolation } from './airsofters.models';
 
+export interface UpdateAirsofterRequest {
+  firstName: string;
+  lastName: string;
+  middleName: string | null;
+  kitDescription: string | null;
+  airsoftGunsList: string | null;
+  teamId: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +31,14 @@ export class AirsoftersService {
 
   getAirsofterById(id: string): Observable<Airsofter> {
     return this.http.get<Airsofter>(`${environment.apiUrl}/airsofters/${id}`);
+  }
+
+  getAirsofterByCallsign(callsign: string): Observable<Airsofter> {
+    return this.http.get<Airsofter>(`${environment.apiUrl}/airsofters/callsign/${encodeURIComponent(callsign)}`);
+  }
+
+  updateAirsofter(id: string, request: UpdateAirsofterRequest): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/airsofters/${id}`, request);
   }
 
   getAirsofterGameHistory(id: string): Observable<AirsofterGameHistoryItem[]> {
