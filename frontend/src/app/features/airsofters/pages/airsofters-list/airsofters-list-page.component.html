@@ -1,0 +1,36 @@
+<main class="airsofters-list-page">
+  <header class="airsofters-list-page__header">
+    <h1>Страйкболисты</h1>
+    <p>Найдите игрока по позывному и перейдите в его профиль.</p>
+  </header>
+
+  <form class="airsofters-list-page__search" (ngSubmit)="onSearch()">
+    <input
+      type="text"
+      name="callsign"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange()"
+      placeholder="Поиск по позывному"
+      aria-label="Поиск по позывному"
+    />
+    <button type="submit">Искать</button>
+  </form>
+
+  <section *ngIf="isLoading" class="state state--loading">Загрузка...</section>
+  <section *ngIf="!isLoading && errorMessage" class="state state--error">{{ errorMessage }}</section>
+  <section *ngIf="!isLoading && !errorMessage && filteredAirsofters.length === 0" class="state state--empty">
+    Ничего не найдено.
+  </section>
+
+  <section *ngIf="!isLoading && !errorMessage && filteredAirsofters.length > 0" class="airsofters-grid">
+    <article class="airsofter-card" *ngFor="let airsofter of filteredAirsofters">
+      <h2>{{ airsofter.callsign }}</h2>
+      <p>
+        {{ airsofter.lastName }} {{ airsofter.firstName }}
+        <span *ngIf="airsofter.middleName">{{ airsofter.middleName }}</span>
+      </p>
+      <p *ngIf="airsofter.teamName">Команда: {{ airsofter.teamName }}</p>
+      <a [routerLink]="['/airsofters', airsofter.id]">Подробнее</a>
+    </article>
+  </section>
+</main>

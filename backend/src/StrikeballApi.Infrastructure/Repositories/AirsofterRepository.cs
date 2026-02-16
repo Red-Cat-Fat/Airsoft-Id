@@ -17,6 +17,14 @@ public class AirsofterRepository : Repository<Airsofter>, IAirsofterRepository
             .FirstOrDefaultAsync(a => a.Callsign == callsign);
     }
 
+    public async Task<IEnumerable<Airsofter>> SearchByCallsignAsync(string callsign)
+    {
+        return await _dbSet
+            .Include(a => a.Team)
+            .Where(a => a.Callsign.Contains(callsign))
+            .ToListAsync();
+    }
+
     public async Task<Airsofter?> GetWithTeamAsync(Guid id)
     {
         return await _dbSet
