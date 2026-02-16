@@ -1,0 +1,13 @@
+<nav class="main-nav" aria-label="Основная навигация">
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Главная</a>
+  <a routerLink="/players" routerLinkActive="active">Игроки</a>
+
+  <ng-container *ngIf="authService.isAuthenticated(); else guestLinks">
+    <a routerLink="/profile/me" routerLinkActive="active">Профиль</a>
+    <button type="button" class="logout-btn" (click)="logout()">Выйти</button>
+  </ng-container>
+
+  <ng-template #guestLinks>
+    <a routerLink="/auth/login" routerLinkActive="active">Войти</a>
+  </ng-template>
+</nav>

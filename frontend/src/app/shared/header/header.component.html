@@ -1,0 +1,16 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" routerLink="/" aria-label="Airsoft ID — на главную">
+      <span class="brand__logo" aria-hidden="true">🎯</span>
+      <span class="brand__name">Airsoft ID</span>
+    </a>
+
+    <div class="site-header__actions">
+      <button type="button" class="theme-toggle" (click)="toggleTheme()">
+        {{ themeService.theme() === 'light' ? 'Тёмная тема' : 'Светлая тема' }}
+      </button>
+
+      <app-main-nav></app-main-nav>
+    </div>
+  </div>
+</header>
