@@ -5,7 +5,8 @@ import { LoginPageComponent } from './features/auth/pages/login/login-page.compo
 import { RegisterPageComponent } from './features/auth/pages/register/register-page.component';
 import { DashboardPageComponent } from './features/dashboard/dashboard-page.component';
 import { ProfileMePageComponent } from './features/profile/pages/me/profile-me-page.component';
-import { PlayersPageComponent } from './features/players/players-page.component';
+import { AirsoftersListPageComponent } from './features/airsofters/pages/airsofters-list/airsofters-list-page.component';
+import { AirsofterDetailsPageComponent } from './features/airsofters/pages/airsofter-details/airsofter-details-page.component';
 import { NotFoundPageComponent } from './features/not-found/not-found-page.component';
 
 export const routes: Routes = [
@@ -34,8 +35,17 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'airsofters',
+    component: AirsoftersListPageComponent
+  },
+  {
+    path: 'airsofters/:id',
+    component: AirsofterDetailsPageComponent
+  },
+  {
     path: 'players',
-    component: PlayersPageComponent
+    redirectTo: 'airsofters',
+    pathMatch: 'full'
   },
   {
     path: '**',

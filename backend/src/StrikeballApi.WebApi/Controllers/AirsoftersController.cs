@@ -24,9 +24,12 @@ public class AirsoftersController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AirsofterDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<AirsofterDto>>> GetAll([FromQuery] string? callsign = null)
     {
-        var airsofters = await _repository.GetAllAsync();
+        var airsofters = string.IsNullOrWhiteSpace(callsign)
+            ? await _repository.GetAllAsync()
+            : await _repository.SearchByCallsignAsync(callsign.Trim());
+
         var dtos = airsofters.Select(MapToDto);
         return Ok(dtos);
     }
