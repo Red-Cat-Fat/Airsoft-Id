@@ -25,7 +25,7 @@
   color: var(--text-main);
 }
 
-.register-page.theme-dark {
+.theme-dark .register-page {
   --bg: #121212;
   --bg-soft: #1a1a1a;
   --surface: #222222;
@@ -51,21 +51,6 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.theme-toggle {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-main);
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.theme-toggle:hover {
-  border-color: var(--amber);
-  color: var(--amber);
 }
 
 .register-card {

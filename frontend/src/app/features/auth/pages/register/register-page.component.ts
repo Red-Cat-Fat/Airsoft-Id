@@ -5,7 +5,6 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
-type ThemeMode = 'light' | 'dark';
 
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const password = group.get('password')?.value;
@@ -32,7 +31,6 @@ export class RegisterPageComponent {
 
   protected readonly isSubmitting = signal(false);
   protected readonly apiError = signal<string | null>(null);
-  protected readonly theme = signal<ThemeMode>('light');
 
   protected readonly registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -50,10 +48,6 @@ export class RegisterPageComponent {
   protected readonly firstNameControl = this.registerForm.controls.firstName;
   protected readonly lastNameControl = this.registerForm.controls.lastName;
   protected readonly callsignControl = this.registerForm.controls.callsign;
-
-  protected toggleTheme(): void {
-    this.theme.set(this.theme() === 'light' ? 'dark' : 'light');
-  }
 
   protected submit(): void {
     if (this.registerForm.invalid || this.isSubmitting()) {
