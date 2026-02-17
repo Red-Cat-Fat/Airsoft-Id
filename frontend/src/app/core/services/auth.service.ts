@@ -39,16 +39,22 @@ export class AuthService {
       );
   }
 
-  logout(): void {
+  logout(redirectTo: string = '/login', notifyServer: boolean = true): void {
+    if (!notifyServer) {
+      this.clearAuthData();
+      this.router.navigate([redirectTo]);
+      return;
+    }
+
     this.http.post(`${environment.apiUrl}/auth/logout`, {}).subscribe({
       complete: () => {
         this.clearAuthData();
-        this.router.navigate(['/auth/login']);
+        this.router.navigate([redirectTo]);
       },
       error: () => {
         // Clear local data even if API call fails
         this.clearAuthData();
-        this.router.navigate(['/auth/login']);
+        this.router.navigate([redirectTo]);
       }
     });
   }

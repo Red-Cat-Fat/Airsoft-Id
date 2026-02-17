@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  return router.createUrlTree(['/auth/login']);
+  return router.createUrlTree(['/login']);
 };
 
 export const guestGuard: CanActivateFn = () => {
@@ -33,6 +33,6 @@ export const roleGuard = (requiredRole: string): CanActivateFn => {
       return true;
     }
 
-    return router.createUrlTree(['/']);
+    return router.createUrlTree(['/forbidden']);
   };
 };

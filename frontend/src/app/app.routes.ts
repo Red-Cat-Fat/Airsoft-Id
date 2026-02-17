@@ -8,6 +8,8 @@ import { MyProfilePageComponent } from './features/profile/pages/my-profile/my-p
 import { AirsoftersListPageComponent } from './features/airsofters/pages/airsofters-list/airsofters-list-page.component';
 import { AirsofterDetailsPageComponent } from './features/airsofters/pages/airsofter-details/airsofter-details-page.component';
 import { NotFoundPageComponent } from './features/not-found/not-found-page.component';
+import { UnauthorizedPageComponent } from './features/unauthorized/unauthorized-page.component';
+import { ForbiddenPageComponent } from './features/forbidden/forbidden-page.component';
 
 export const routes: Routes = [
   {
@@ -15,14 +17,32 @@ export const routes: Routes = [
     component: HomePageComponent
   },
   {
-    path: 'auth/login',
+    path: 'login',
     component: LoginPageComponent,
     canActivate: [guestGuard]
   },
   {
-    path: 'auth/register',
+    path: 'register',
     component: RegisterPageComponent,
     canActivate: [guestGuard]
+  },
+  {
+    path: 'auth/login',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
+    path: 'auth/register',
+    redirectTo: 'register',
+    pathMatch: 'full'
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedPageComponent
+  },
+  {
+    path: 'forbidden',
+    component: ForbiddenPageComponent
   },
   {
     path: 'dashboard',
