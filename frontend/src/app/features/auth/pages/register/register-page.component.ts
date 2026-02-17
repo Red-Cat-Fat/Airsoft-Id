@@ -107,6 +107,10 @@ export class RegisterPageComponent {
       return serverMessage || 'Проверьте корректность введённых данных.';
     }
 
-    return 'Не удалось зарегистрироваться. Попробуйте снова позже.';
+    const serverMessage = typeof error.error === 'string'
+      ? error.error
+      : error.error?.message || error.error?.title || error.error?.detail;
+
+    return serverMessage || 'Не удалось зарегистрироваться. Попробуйте снова позже.';
   }
 }
