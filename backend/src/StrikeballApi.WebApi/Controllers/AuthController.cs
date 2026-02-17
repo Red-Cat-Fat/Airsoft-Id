@@ -17,6 +17,7 @@ public class AuthController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenService _tokenService;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ApplicationDbContext _context;
     private readonly ILogger<AuthController> _logger;
 
@@ -24,12 +25,14 @@ public class AuthController : ControllerBase
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         ITokenService tokenService,
+        RoleManager<ApplicationRole> roleManager,
         ApplicationDbContext context,
         ILogger<AuthController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _roleManager = roleManager;
         _context = context;
         _logger = logger;
     }
@@ -40,15 +43,6 @@ public class AuthController : ControllerBase
         if (request.Password != request.ConfirmPassword)
         {
             return BadRequest(new { message = "Passwords do not match" });
-        }
-
-        // Check if callsign is unique
-        var existingAirsofter = await _context.Airsofters
-            .FirstOrDefaultAsync(a => a.Callsign == request.Callsign);
-
-        if (existingAirsofter != null)
-        {
-            return BadRequest(new { message = "Callsign is already taken" });
         }
 
         var user = new ApplicationUser
@@ -78,7 +72,25 @@ public class AuthController : ControllerBase
         await _context.SaveChangesAsync();
 
         // Assign default role
-        await _userManager.AddToRoleAsync(user, "Airsofter");
+        var addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
+        if (!addRoleResult.Succeeded)
+        {
+            var roleCreated = await EnsureRoleExistsAsync("Airsofter");
+            if (!roleCreated)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере." });
+            }
+
+            addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
+            if (!addRoleResult.Succeeded)
+            {
+                _logger.LogError("Unable to assign Airsofter role to user {Email}: {Errors}", request.Email,
+                    string.Join(", ", addRoleResult.Errors.Select(e => e.Description)));
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере." });
+            }
+        }
 
         // Reload user with airsofter
         user = await _userManager.Users
@@ -90,6 +102,24 @@ public class AuthController : ControllerBase
         _logger.LogInformation("User {Email} registered successfully", user.Email);
 
         return Ok(authResponse);
+    }
+
+    private async Task<bool> EnsureRoleExistsAsync(string roleName)
+    {
+        if (await _roleManager.RoleExistsAsync(roleName))
+        {
+            return true;
+        }
+
+        var createRoleResult = await _roleManager.CreateAsync(new ApplicationRole(roleName));
+        if (!createRoleResult.Succeeded)
+        {
+            _logger.LogError("Unable to create role {Role}: {Errors}", roleName,
+                string.Join(", ", createRoleResult.Errors.Select(e => e.Description)));
+            return false;
+        }
+
+        return true;
     }
 
     [HttpPost("login")]

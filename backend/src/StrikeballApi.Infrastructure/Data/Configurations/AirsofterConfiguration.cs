@@ -27,8 +27,6 @@ public class AirsofterConfiguration : IEntityTypeConfiguration<Airsofter>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.HasIndex(a => a.Callsign)
-            .IsUnique();
 
         builder.Property(a => a.KitDescription)
             .HasColumnType("text");

@@ -133,6 +133,8 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+await EnsureRolesExistAsync(app.Services);
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -148,3 +150,18 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+static async Task EnsureRolesExistAsync(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    var roles = new[] { "Airsofter", "TeamLeader", "Organizer", "FieldOwner", "Administrator" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new ApplicationRole(role));
+        }
+    }
+}
