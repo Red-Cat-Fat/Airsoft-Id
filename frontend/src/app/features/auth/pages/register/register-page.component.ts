@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -50,10 +50,6 @@ export class RegisterPageComponent {
   protected readonly firstNameControl = this.registerForm.controls.firstName;
   protected readonly lastNameControl = this.registerForm.controls.lastName;
   protected readonly callsignControl = this.registerForm.controls.callsign;
-
-  protected readonly isFormInvalid = computed(
-    () => this.registerForm.invalid || this.isSubmitting()
-  );
 
   protected toggleTheme(): void {
     this.theme.set(this.theme() === 'light' ? 'dark' : 'light');

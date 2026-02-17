@@ -43,7 +43,7 @@
 
       <p class="api-error" *ngIf="apiError()">{{ apiError() }}</p>
 
-      <button type="submit" [disabled]="isFormInvalid()">
+      <button type="submit" [disabled]="isSubmitting()">
         {{ isSubmitting() ? 'Регистрация...' : 'Зарегистрироваться' }}
       </button>
     </form>
