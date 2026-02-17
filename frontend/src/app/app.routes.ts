@@ -10,21 +10,70 @@ import { AirsofterDetailsPageComponent } from './features/airsofters/pages/airso
 import { NotFoundPageComponent } from './features/not-found/not-found-page.component';
 import { UnauthorizedPageComponent } from './features/unauthorized/unauthorized-page.component';
 import { ForbiddenPageComponent } from './features/forbidden/forbidden-page.component';
+import { AboutPageComponent } from './features/static/pages/about/about-page.component';
+import { ContactsPageComponent } from './features/static/pages/contacts/contacts-page.component';
+import { PrivacyPolicyPageComponent } from './features/static/pages/privacy-policy/privacy-policy-page.component';
+import { TermsPageComponent } from './features/static/pages/terms/terms-page.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomePageComponent
+    component: HomePageComponent,
+    data: {
+      title: 'Airsoft ID — Социальная платформа для страйкболистов',
+      description:
+        'Airsoft ID помогает страйкболистам находить игроков, команды и мероприятия в одном месте.'
+    }
+  },
+  {
+    path: 'about',
+    component: AboutPageComponent,
+    data: {
+      title: 'О проекте Airsoft ID',
+      description: 'Узнайте о миссии и возможностях платформы Airsoft ID для страйкбольного сообщества.'
+    }
+  },
+  {
+    path: 'contacts',
+    component: ContactsPageComponent,
+    data: {
+      title: 'Контакты Airsoft ID',
+      description: 'Свяжитесь с командой Airsoft ID по вопросам сотрудничества, поддержки и предложений.'
+    }
+  },
+  {
+    path: 'privacy-policy',
+    component: PrivacyPolicyPageComponent,
+    data: {
+      title: 'Политика конфиденциальности — Airsoft ID',
+      description: 'Информация о том, как Airsoft ID обрабатывает и защищает персональные данные пользователей.'
+    }
+  },
+  {
+    path: 'terms',
+    component: TermsPageComponent,
+    data: {
+      title: 'Пользовательское соглашение — Airsoft ID',
+      description: 'Правила использования сервиса Airsoft ID и условия взаимодействия с платформой.'
+    }
   },
   {
     path: 'login',
     component: LoginPageComponent,
-    canActivate: [guestGuard]
+    canActivate: [guestGuard],
+    data: {
+      title: 'Вход — Airsoft ID',
+      description: 'Авторизуйтесь в Airsoft ID для доступа к профилю и возможностям сообщества.'
+    }
   },
   {
     path: 'register',
     component: RegisterPageComponent,
-    canActivate: [guestGuard]
+    canActivate: [guestGuard],
+    data: {
+      title: 'Регистрация — Airsoft ID',
+      description: 'Создайте аккаунт Airsoft ID, чтобы участвовать в страйкбольном сообществе.'
+    }
   },
   {
     path: 'auth/login',
@@ -56,7 +105,11 @@ export const routes: Routes = [
   },
   {
     path: 'airsofters',
-    component: AirsoftersListPageComponent
+    component: AirsoftersListPageComponent,
+    data: {
+      title: 'Игроки страйкбола — Airsoft ID',
+      description: 'Список профилей страйкболистов на платформе Airsoft ID.'
+    }
   },
   {
     path: 'airsofters/:id',
