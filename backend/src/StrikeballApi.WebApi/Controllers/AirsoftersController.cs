@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using StrikeballApi.Domain.Entities;
 using StrikeballApi.Infrastructure.Repositories;
 using StrikeballApi.WebApi.Models.Airsofters;
@@ -94,6 +95,12 @@ public class AirsoftersController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAirsofterRequest request)
     {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (User.Identity?.IsAuthenticated != true || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
         var airsofter = await _repository.GetByIdAsync(id);
 
         if (airsofter == null)
@@ -101,17 +108,37 @@ public class AirsoftersController : ControllerBase
             return NotFound();
         }
 
-        // Update properties
-        airsofter.FirstName = request.FirstName;
-        airsofter.LastName = request.LastName;
-        airsofter.MiddleName = request.MiddleName;
-        airsofter.KitDescription = request.KitDescription;
-        airsofter.AirsoftGunsList = request.AirsoftGunsList;
-        airsofter.TeamId = request.TeamId;
+        var isAdministrator = User.IsInRole("Administrator");
+        if (airsofter.UserId != userId && !isAdministrator)
+        {
+            return Forbid();
+        }
+
+        UpdateAirsofterFromRequest(airsofter, request);
 
         await _repository.UpdateAsync(airsofter);
 
         _logger.LogInformation("Airsofter {Id} updated", id);
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPut("{id}/admin")]
+    public async Task<IActionResult> UpdateAsAdministrator(Guid id, [FromBody] UpdateAirsofterRequest request)
+    {
+        var airsofter = await _repository.GetByIdAsync(id);
+
+        if (airsofter == null)
+        {
+            return NotFound();
+        }
+
+        UpdateAirsofterFromRequest(airsofter, request);
+
+        await _repository.UpdateAsync(airsofter);
+
+        _logger.LogInformation("Airsofter {Id} updated by administrator", id);
 
         return NoContent();
     }
@@ -196,5 +223,15 @@ public class AirsoftersController : ControllerBase
             GamesPlayed = airsofter.GameParticipants?.Count ?? 0,
             ViolationsCount = airsofter.Violations?.Count ?? 0
         };
+    }
+
+    private static void UpdateAirsofterFromRequest(Airsofter airsofter, UpdateAirsofterRequest request)
+    {
+        airsofter.FirstName = request.FirstName;
+        airsofter.LastName = request.LastName;
+        airsofter.MiddleName = request.MiddleName;
+        airsofter.KitDescription = request.KitDescription;
+        airsofter.AirsoftGunsList = request.AirsoftGunsList;
+        airsofter.TeamId = request.TeamId;
     }
 }
