@@ -1,9 +1,6 @@
-<main class="login-page" [class.theme-light]="theme() === 'light'" [class.theme-dark]="theme() === 'dark'">
+<main class="login-page">
   <header class="login-page__header">
     <a routerLink="/" class="brand">Airsoft ID</a>
-    <button type="button" class="theme-toggle" (click)="toggleTheme()">
-      {{ theme() === 'light' ? 'Тёмная тема' : 'Светлая тема' }}
-    </button>
   </header>
 
   <section class="login-card">

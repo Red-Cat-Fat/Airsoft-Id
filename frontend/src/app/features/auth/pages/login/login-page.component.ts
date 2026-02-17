@@ -5,8 +5,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
-type ThemeMode = 'light' | 'dark';
-
 @Component({
   selector: 'app-login-page',
   standalone: true,
@@ -21,7 +19,6 @@ export class LoginPageComponent {
 
   protected readonly isSubmitting = signal(false);
   protected readonly apiError = signal<string | null>(null);
-  protected readonly theme = signal<ThemeMode>('light');
 
   protected readonly loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -34,10 +31,6 @@ export class LoginPageComponent {
   protected readonly isFormInvalid = computed(
     () => this.loginForm.invalid || this.isSubmitting()
   );
-
-  protected toggleTheme(): void {
-    this.theme.set(this.theme() === 'light' ? 'dark' : 'light');
-  }
 
   protected submit(): void {
     if (this.loginForm.invalid || this.isSubmitting()) {
