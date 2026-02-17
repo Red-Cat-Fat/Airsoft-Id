@@ -147,9 +147,9 @@ public class AirsoftersController : ControllerBase
 
         var games = airsofter.GameParticipants.Select(gp => new
         {
-            gp.Game.Id,
-            gp.Game.Date,
-            gp.Game.Field.Name,
+            GameId = gp.Game?.Id,
+            Date = gp.Game?.Date,
+            FieldName = gp.Game?.Field != null ? gp.Game.Field.Name : null,
             gp.Status,
             gp.RegisteredAt
         });
@@ -174,7 +174,7 @@ public class AirsoftersController : ControllerBase
             v.Description,
             v.Date,
             v.Severity,
-            FieldName = v.Field.Name
+            FieldName = v.Field != null ? v.Field.Name : null
         });
 
         return Ok(violations);

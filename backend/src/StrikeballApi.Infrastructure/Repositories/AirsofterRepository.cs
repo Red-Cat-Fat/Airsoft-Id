@@ -59,8 +59,10 @@ public class AirsofterRepository : Repository<Airsofter>, IAirsofterRepository
         return await _dbSet
             .Include(a => a.Team)
             .Include(a => a.Violations)
+                .ThenInclude(v => v.Field)
             .Include(a => a.GameParticipants)
                 .ThenInclude(gp => gp.Game)
+                    .ThenInclude(g => g.Field)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 }
