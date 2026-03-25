@@ -45,63 +45,99 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Passwords do not match" });
         }
 
-        var user = new ApplicationUser
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        ApplicationUser? user = null;
+
+        try
         {
-            UserName = request.Email,
-            Email = request.Email
-        };
-
-        var result = await _userManager.CreateAsync(user, request.Password);
-
-        if (!result.Succeeded)
-        {
-            return BadRequest(new { message = "Registration failed", errors = result.Errors });
-        }
-
-        // Create Airsofter profile
-        var airsofter = new Airsofter
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            MiddleName = request.MiddleName,
-            Callsign = request.Callsign,
-            UserId = user.Id
-        };
-
-        _context.Airsofters.Add(airsofter);
-        await _context.SaveChangesAsync();
-
-        // Assign default role
-        var addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
-        if (!addRoleResult.Succeeded)
-        {
-            var roleCreated = await EnsureRoleExistsAsync("Airsofter");
-            if (!roleCreated)
+            user = new ApplicationUser
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере." });
+                UserName = request.Email,
+                Email = request.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+
+            if (!result.Succeeded)
+            {
+                await transaction.RollbackAsync();
+                return BadRequest(new { message = "Registration failed", errors = result.Errors });
             }
 
-            addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
+            // Create Airsofter profile
+            var airsofter = new Airsofter
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                MiddleName = request.MiddleName,
+                Callsign = request.Callsign,
+                UserId = user.Id
+            };
+
+            _context.Airsofters.Add(airsofter);
+            await _context.SaveChangesAsync();
+
+            // Assign default role
+            var addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
             if (!addRoleResult.Succeeded)
             {
-                _logger.LogError("Unable to assign Airsofter role to user {Email}: {Errors}", request.Email,
-                    string.Join(", ", addRoleResult.Errors.Select(e => e.Description)));
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере." });
+                var roleCreated = await EnsureRoleExistsAsync("Airsofter");
+                if (!roleCreated)
+                {
+                    throw new InvalidOperationException("Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере.");
+                }
+
+                addRoleResult = await _userManager.AddToRoleAsync(user, "Airsofter");
+                if (!addRoleResult.Succeeded)
+                {
+                    _logger.LogError("Unable to assign Airsofter role to user {Email}: {Errors}", request.Email,
+                        string.Join(", ", addRoleResult.Errors.Select(e => e.Description)));
+                    throw new InvalidOperationException("Не удалось назначить роль новому пользователю. Проверьте настройки ролей на сервере.");
+                }
             }
+
+            // Reload user with airsofter
+            user = await _userManager.Users
+                .Include(u => u.Airsofter)
+                .FirstAsync(u => u.Id == user.Id);
+
+            var authResponse = await _tokenService.GenerateTokensAsync(user);
+
+            await transaction.CommitAsync();
+
+            _logger.LogInformation("User {Email} registered successfully", user.Email);
+
+            return Ok(authResponse);
         }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
 
-        // Reload user with airsofter
-        user = await _userManager.Users
-            .Include(u => u.Airsofter)
-            .FirstAsync(u => u.Id == user.Id);
+            if (user != null)
+            {
+                var existingUser = await _userManager.FindByIdAsync(user.Id.ToString());
+                if (existingUser != null)
+                {
+                    var deleteResult = await _userManager.DeleteAsync(existingUser);
+                    if (!deleteResult.Succeeded)
+                    {
+                        _logger.LogError("Unable to cleanup user {Email} after failed registration: {Errors}", request.Email,
+                            string.Join(", ", deleteResult.Errors.Select(e => e.Description)));
+                    }
+                }
+            }
 
-        var authResponse = await _tokenService.GenerateTokensAsync(user);
+            _logger.LogError(ex, "User registration failed for {Email}", request.Email);
 
-        _logger.LogInformation("User {Email} registered successfully", user.Email);
+            if (ex is InvalidOperationException)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = ex.Message });
+            }
 
-        return Ok(authResponse);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { message = "Registration failed due to server error" });
+        }
     }
 
     private async Task<bool> EnsureRoleExistsAsync(string roleName)
