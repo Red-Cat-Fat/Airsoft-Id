@@ -39,3 +39,7 @@ All responses must be in Russian (Русский язык).
 ## 📚 Core API Endpoints (StrikeballSocialNetwork)
 - **Authentication Flow:** Uses Bearer JWT tokens across all protected endpoints (`/api/*`).
 - **List Components:** Check `/api/airsofters`, `/api/teams`, and `/api/games` for list retrieval.
+
+## ✍️ Git Conventions
+- All commit messages must be written in **Russian**.
+- Keep them short, no trailing dot.
