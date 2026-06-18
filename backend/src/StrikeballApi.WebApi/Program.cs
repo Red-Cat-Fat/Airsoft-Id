@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StrikeballApi.Application;
+using StrikeballApi.Application.Common.Interfaces;
 using StrikeballApi.Infrastructure.Data;
 using StrikeballApi.Infrastructure.Identity;
-using StrikeballApi.Infrastructure.Repositories;
+using StrikeballApi.Infrastructure.Services;
 using StrikeballApi.WebApi.Services;
 using StackExchange.Redis;
 using System.Text;
@@ -16,11 +18,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Register services
-builder.Services.AddScoped<ITokenService, TokenService>();
+// Register Application layer (MediatR, FluentValidation, AutoMapper)
+builder.Services.AddApplication();
 
-// Register repositories
-builder.Services.AddScoped<IAirsofterRepository, AirsofterRepository>();
+// Register services
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddHttpContextAccessor();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
@@ -60,6 +65,8 @@ builder.Services.AddSwaggerGen(options =>
 // Configure Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IApplicationDbContext>(sp =>
+    sp.GetRequiredService<ApplicationDbContext>());
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -171,3 +178,5 @@ static async Task EnsureRolesExistAsync(IServiceProvider services)
         }
     }
 }
+
+public partial class Program { }

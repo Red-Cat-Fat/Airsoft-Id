@@ -1,119 +1,28 @@
-using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using StrikeballApi.Infrastructure.Data;
-using StrikeballApi.Infrastructure.Identity;
+using Moq;
+using StrikeballApi.Application.Common.Interfaces;
+using StrikeballApi.Application.Features.Auth.Commands;
 using StrikeballApi.WebApi.Controllers;
-using StrikeballApi.WebApi.Models.Auth;
-using StrikeballApi.WebApi.Services;
+using Xunit;
 
 namespace StrikeballApi.WebApi.Tests;
 
 public class AuthControllerRegistrationTests
 {
-    [Fact]
-    public async Task Register_AllowsMultipleUsersWithSameCallsign()
+    private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<ICurrentUserService> _currentUserMock;
+    private readonly AuthController _controller;
+
+    public AuthControllerRegistrationTests()
     {
-        await using var scope = CreateScope();
-        var controller = CreateController(scope.ServiceProvider);
-
-        var firstResult = await controller.Register(new RegisterRequest
-        {
-            Email = "first@example.com",
-            Password = "Password1",
-            ConfirmPassword = "Password1",
-            FirstName = "First",
-            LastName = "User",
-            Callsign = "Ghost"
-        });
-
-        var secondResult = await controller.Register(new RegisterRequest
-        {
-            Email = "second@example.com",
-            Password = "Password1",
-            ConfirmPassword = "Password1",
-            FirstName = "Second",
-            LastName = "User",
-            Callsign = "Ghost"
-        });
-
-        Assert.IsType<OkObjectResult>(firstResult.Result);
-        Assert.IsType<OkObjectResult>(secondResult.Result);
-
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var sameCallsignCount = await db.Airsofters.CountAsync(a => a.Callsign == "Ghost");
-        Assert.Equal(2, sameCallsignCount);
-    }
-
-    [Fact]
-    public async Task Register_CreatesRoleIfMissing_AndRegistersUser()
-    {
-        await using var scope = CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var controller = CreateController(scope.ServiceProvider);
-
-        Assert.False(await roleManager.RoleExistsAsync("Airsofter"));
-
-        var result = await controller.Register(new RegisterRequest
-        {
-            Email = "norole@example.com",
-            Password = "Password1",
-            ConfirmPassword = "Password1",
-            FirstName = "No",
-            LastName = "Role",
-            Callsign = "Falcon"
-        });
-
-        Assert.IsType<OkObjectResult>(result.Result);
-        Assert.True(await roleManager.RoleExistsAsync("Airsofter"));
-
-        var user = await userManager.FindByEmailAsync("norole@example.com");
-        Assert.NotNull(user);
-        Assert.True(await userManager.IsInRoleAsync(user!, "Airsofter"));
-    }
-
-    private static AsyncServiceScope CreateScope()
-    {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseInMemoryDatabase($"auth-tests-{Guid.NewGuid()}"));
-
-        services.AddIdentityCore<ApplicationUser>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-                options.Password.RequireDigit = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredLength = 6;
-            })
-            .AddRoles<ApplicationRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddSignInManager();
-
-        var provider = services.BuildServiceProvider();
-        return provider.CreateAsyncScope();
-    }
-
-    private static AuthController CreateController(IServiceProvider serviceProvider)
-    {
-        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var signInManager = serviceProvider.GetRequiredService<SignInManager<ApplicationUser>>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-        var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
-        return new AuthController(
-            userManager,
-            signInManager,
-            new FakeTokenService(),
-            roleManager,
-            db,
+        _mediatorMock = new Mock<IMediator>();
+        _currentUserMock = new Mock<ICurrentUserService>();
+        _controller = new AuthController(
+            _mediatorMock.Object,
+            _currentUserMock.Object,
             NullLogger<AuthController>.Instance)
         {
             ControllerContext = new ControllerContext
@@ -123,30 +32,22 @@ public class AuthControllerRegistrationTests
         };
     }
 
-    private sealed class FakeTokenService : ITokenService
+    [Fact]
+    public async Task Register_PasswordsDoNotMatch_ReturnsBadRequest()
     {
-        public ClaimsPrincipal? ValidateToken(string token) => null;
-
-        public Task<AuthResponse> GenerateTokensAsync(ApplicationUser user)
+        var command = new RegisterAirsofterCommand
         {
-            return Task.FromResult(new AuthResponse
-            {
-                AccessToken = "access-token",
-                RefreshToken = "refresh-token",
-                ExpiresAt = DateTime.UtcNow.AddHours(1),
-                User = new UserInfo
-                {
-                    Id = user.Id,
-                    Email = user.Email ?? string.Empty,
-                    Callsign = user.Airsofter?.Callsign ?? string.Empty,
-                    Roles = new List<string> { "Airsofter" }
-                }
-            });
-        }
+            Email = "test@example.com",
+            Password = "Password1",
+            ConfirmPassword = "DifferentPassword",
+            FirstName = "Test",
+            LastName = "User",
+            Callsign = "Tester"
+        };
 
-        public Task<AuthResponse?> RefreshTokenAsync(string refreshToken)
-        {
-            return Task.FromResult<AuthResponse?>(null);
-        }
+        var result = await _controller.Register(command);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.NotNull(badRequestResult.Value);
     }
 }

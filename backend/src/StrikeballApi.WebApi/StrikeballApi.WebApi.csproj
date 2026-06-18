@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StrikeballApi.Application\StrikeballApi.Application.csproj" />
     <ProjectReference Include="..\StrikeballApi.Infrastructure\StrikeballApi.Infrastructure.csproj" />
     <ProjectReference Include="..\StrikeballApi.Domain\StrikeballApi.Domain.csproj" />
   </ItemGroup>

@@ -1,9 +1,9 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using StrikeballApi.Domain.Entities;
-using StrikeballApi.Infrastructure.Repositories;
-using StrikeballApi.WebApi.Models.Airsofters;
+using StrikeballApi.Application.DTOs.Airsofters;
+using StrikeballApi.Application.Features.Airsofters.Commands;
+using StrikeballApi.Application.Features.Airsofters.Queries;
 
 namespace StrikeballApi.WebApi.Controllers;
 
@@ -12,14 +12,12 @@ namespace StrikeballApi.WebApi.Controllers;
 [Route("api/[controller]")]
 public class AirsoftersController : ControllerBase
 {
-    private readonly IAirsofterRepository _repository;
+    private readonly IMediator _mediator;
     private readonly ILogger<AirsoftersController> _logger;
 
-    public AirsoftersController(
-        IAirsofterRepository repository,
-        ILogger<AirsoftersController> logger)
+    public AirsoftersController(IMediator mediator, ILogger<AirsoftersController> logger)
     {
-        _repository = repository;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -27,211 +25,94 @@ public class AirsoftersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AirsofterDto>>> GetAll([FromQuery] string? callsign = null)
     {
-        var airsofters = string.IsNullOrWhiteSpace(callsign)
-            ? await _repository.GetAllAsync()
-            : await _repository.SearchByCallsignAsync(callsign.Trim());
-
-        var dtos = airsofters.Select(MapToDto);
-        return Ok(dtos);
+        var result = await _mediator.Send(new GetAirsoftersListQuery { Callsign = callsign });
+        return Ok(result);
     }
 
     [AllowAnonymous]
     [HttpGet("{id}")]
-    public async Task<ActionResult<AirsofterDto>> GetById(Guid id)
+    public async Task<ActionResult<AirsofterDetailsDto>> GetById(Guid id)
     {
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
+        try
+        {
+            var result = await _mediator.Send(new GetAirsofterByIdQuery { Id = id });
+            return Ok(result);
+        }
+        catch (Application.Common.Exceptions.NotFoundException)
         {
             return NotFound();
         }
-
-        return Ok(MapToDto(airsofter));
-    }
-
-    [AllowAnonymous]
-    [HttpGet("callsign/{callsign}")]
-    public async Task<ActionResult<AirsofterDto>> GetByCallsign(string callsign)
-    {
-        var airsofter = await _repository.GetByCallsignAsync(callsign);
-
-        if (airsofter == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(MapToDto(airsofter));
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<AirsofterDto>> Create([FromBody] CreateAirsofterRequest request)
-    {
-        // Check if callsign already exists
-        var existing = await _repository.GetByCallsignAsync(request.Callsign);
-        if (existing != null)
-        {
-            return BadRequest(new { message = "Callsign already exists" });
-        }
-
-        var airsofter = new Airsofter
-        {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            MiddleName = request.MiddleName,
-            Callsign = request.Callsign,
-            KitDescription = request.KitDescription,
-            AirsoftGunsList = request.AirsoftGunsList,
-            TeamId = request.TeamId,
-            UserId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString())
-        };
-
-        var created = await _repository.AddAsync(airsofter);
-
-        _logger.LogInformation("Airsofter {Callsign} created", created.Callsign);
-
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, MapToDto(created));
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAirsofterRequest request)
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (User.Identity?.IsAuthenticated != true || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            return Unauthorized();
-        }
-
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
-        {
-            return NotFound();
-        }
-
-        var isAdministrator = User.IsInRole("Administrator");
-        if (airsofter.UserId != userId && !isAdministrator)
-        {
-            return Forbid();
-        }
-
-        UpdateAirsofterFromRequest(airsofter, request);
-
-        await _repository.UpdateAsync(airsofter);
-
-        _logger.LogInformation("Airsofter {Id} updated", id);
-
-        return NoContent();
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpPut("{id}/admin")]
-    public async Task<IActionResult> UpdateAsAdministrator(Guid id, [FromBody] UpdateAirsofterRequest request)
-    {
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
-        {
-            return NotFound();
-        }
-
-        UpdateAirsofterFromRequest(airsofter, request);
-
-        await _repository.UpdateAsync(airsofter);
-
-        _logger.LogInformation("Airsofter {Id} updated by administrator", id);
-
-        return NoContent();
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
-        {
-            return NotFound();
-        }
-
-        await _repository.DeleteAsync(airsofter);
-
-        _logger.LogInformation("Airsofter {Id} deleted", id);
-
-        return NoContent();
     }
 
     [AllowAnonymous]
     [HttpGet("{id}/game-history")]
     public async Task<ActionResult> GetGameHistory(Guid id)
     {
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
+        try
+        {
+            var result = await _mediator.Send(new GetAirsofterGameHistoryQuery { AirsofterId = id });
+            return Ok(result);
+        }
+        catch (Application.Common.Exceptions.NotFoundException)
         {
             return NotFound();
         }
-
-        var games = airsofter.GameParticipants.Select(gp => new
-        {
-            GameId = gp.Game?.Id,
-            Date = gp.Game?.Date,
-            FieldName = gp.Game?.Field != null ? gp.Game.Field.Name : null,
-            gp.Status,
-            gp.RegisteredAt
-        });
-
-        return Ok(games);
     }
 
     [AllowAnonymous]
     [HttpGet("{id}/violations")]
     public async Task<ActionResult> GetViolations(Guid id)
     {
-        var airsofter = await _repository.GetByIdAsync(id);
-
-        if (airsofter == null)
+        try
+        {
+            var result = await _mediator.Send(new GetAirsofterViolationsQuery { AirsofterId = id });
+            return Ok(result);
+        }
+        catch (Application.Common.Exceptions.NotFoundException)
         {
             return NotFound();
         }
-
-        var violations = airsofter.Violations.Select(v => new
-        {
-            v.Id,
-            v.Description,
-            v.Date,
-            v.Severity,
-            FieldName = v.Field != null ? v.Field.Name : null
-        });
-
-        return Ok(violations);
     }
 
-    private static AirsofterDto MapToDto(Airsofter airsofter)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAirsofterCommand command)
     {
-        return new AirsofterDto
+        if (id != command.Id)
         {
-            Id = airsofter.Id,
-            FirstName = airsofter.FirstName,
-            LastName = airsofter.LastName,
-            MiddleName = airsofter.MiddleName,
-            Callsign = airsofter.Callsign,
-            KitDescription = airsofter.KitDescription,
-            AirsoftGunsList = airsofter.AirsoftGunsList,
-            TeamId = airsofter.TeamId,
-            TeamName = airsofter.Team?.FullName,
-            GamesPlayed = airsofter.GameParticipants?.Count ?? 0,
-            ViolationsCount = airsofter.Violations?.Count ?? 0
-        };
+            return BadRequest(new { message = "Id mismatch" });
+        }
+
+        try
+        {
+            await _mediator.Send(command);
+            return NoContent();
+        }
+        catch (Application.Common.Exceptions.NotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Application.Common.Exceptions.UnauthorizedException)
+        {
+            return Forbid();
+        }
     }
 
-    private static void UpdateAirsofterFromRequest(Airsofter airsofter, UpdateAirsofterRequest request)
+    [Authorize(Roles = "Administrator")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        airsofter.FirstName = request.FirstName;
-        airsofter.LastName = request.LastName;
-        airsofter.MiddleName = request.MiddleName;
-        airsofter.KitDescription = request.KitDescription;
-        airsofter.AirsoftGunsList = request.AirsoftGunsList;
-        airsofter.TeamId = request.TeamId;
+        try
+        {
+            await _mediator.Send(new DeleteAirsofterCommand { Id = id });
+            return NoContent();
+        }
+        catch (Application.Common.Exceptions.NotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Application.Common.Exceptions.UnauthorizedException)
+        {
+            return Forbid();
+        }
     }
 }

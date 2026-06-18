@@ -1,4 +1,4 @@
-namespace StrikeballApi.WebApi.Models.Auth;
+namespace StrikeballApi.Application.DTOs.Auth;
 
 public class RefreshTokenRequest
 {

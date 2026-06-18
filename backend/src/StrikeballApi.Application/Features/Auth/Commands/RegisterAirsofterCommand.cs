@@ -1,6 +1,9 @@
-namespace StrikeballApi.WebApi.Models.Auth;
+using MediatR;
+using StrikeballApi.Application.DTOs.Auth;
 
-public class RegisterRequest
+namespace StrikeballApi.Application.Features.Auth.Commands;
+
+public class RegisterAirsofterCommand : IRequest<AuthResponse>
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;

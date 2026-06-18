@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="xunit" Version="2.9.2" />
@@ -18,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../src/StrikeballApi.Application/StrikeballApi.Application.csproj" />
     <ProjectReference Include="../../src/StrikeballApi.WebApi/StrikeballApi.WebApi.csproj" />
     <ProjectReference Include="../../src/StrikeballApi.Infrastructure/StrikeballApi.Infrastructure.csproj" />
     <ProjectReference Include="../../src/StrikeballApi.Domain/StrikeballApi.Domain.csproj" />

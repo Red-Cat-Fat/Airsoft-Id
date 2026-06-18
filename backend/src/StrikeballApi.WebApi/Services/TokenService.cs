@@ -1,20 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using StrikeballApi.Application.Common.Interfaces;
+using StrikeballApi.Application.DTOs.Auth;
 using StrikeballApi.Infrastructure.Identity;
-using StrikeballApi.WebApi.Models.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace StrikeballApi.WebApi.Services;
-
-public interface ITokenService
-{
-    Task<AuthResponse> GenerateTokensAsync(ApplicationUser user);
-    Task<AuthResponse?> RefreshTokenAsync(string refreshToken);
-    ClaimsPrincipal? ValidateToken(string token);
-}
 
 public class TokenService : ITokenService
 {
@@ -27,8 +21,14 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public async Task<AuthResponse> GenerateTokensAsync(ApplicationUser user)
+    public async Task<AuthResponse> GenerateTokensAsync(Guid userId, string email, string? callsign)
     {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
         var accessToken = await GenerateAccessTokenAsync(user);
         var refreshToken = GenerateRefreshToken();
 
@@ -67,7 +67,7 @@ public class TokenService : ITokenService
             return null;
         }
 
-        return await GenerateTokensAsync(user);
+        return await GenerateTokensAsync(user.Id, user.Email ?? string.Empty, user.Airsofter?.Callsign);
     }
 
     public ClaimsPrincipal? ValidateToken(string token)
